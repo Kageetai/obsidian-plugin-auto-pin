@@ -7,7 +7,7 @@ import {
 
 export default class AutoPinPlugin extends Plugin {
 	settings: AutoPinSettings;
-	private pinnedLeafIds: Set<string> = new Set();
+	private processedLeafIds: Set<string> = new Set();
 
 	async onload() {
 		await this.loadSettings();
@@ -62,7 +62,7 @@ export default class AutoPinPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.pinnedLeafIds.clear();
+		this.processedLeafIds.clear();
 	}
 
 	async loadSettings() {
@@ -122,13 +122,17 @@ export default class AutoPinPlugin extends Plugin {
 	 * Pin a leaf if it meets all eligibility criteria
 	 */
 	private pinLeafIfEligible(leaf: WorkspaceLeaf): void {
-		// Get unique leaf ID for tracking
+		// Using an undocumented property 'id' for unique leaf identification.
+		// This may break in future Obsidian updates.
 		const leafId = (leaf as unknown as { id: string }).id;
 
-		// Skip if we've already processed this leaf
-		if (leafId && this.pinnedLeafIds.has(leafId)) {
+		// Skip if we've already processed this leaf to avoid re-evaluation
+		if (!leafId || this.processedLeafIds.has(leafId)) {
 			return;
 		}
+
+		// Mark as processed early to prevent re-evaluation on subsequent layout changes
+		this.processedLeafIds.add(leafId);
 
 		// Check if the leaf has an associated file (primary filter)
 		const file = this.getFileFromLeaf(leaf);
@@ -150,11 +154,6 @@ export default class AutoPinPlugin extends Plugin {
 
 		// All checks passed - pin the leaf
 		leaf.setPinned(true);
-
-		// Track that we've pinned this leaf
-		if (leafId) {
-			this.pinnedLeafIds.add(leafId);
-		}
 	}
 
 	/**
@@ -172,7 +171,7 @@ export default class AutoPinPlugin extends Plugin {
 	private pinNewlyCreatedLeaves(): void {
 		this.app.workspace.iterateAllLeaves((leaf) => {
 			const leafId = (leaf as unknown as { id: string }).id;
-			if (leafId && !this.pinnedLeafIds.has(leafId)) {
+			if (leafId && !this.processedLeafIds.has(leafId)) {
 				this.pinLeafIfEligible(leaf);
 			}
 		});
@@ -185,6 +184,6 @@ export default class AutoPinPlugin extends Plugin {
 		this.app.workspace.iterateAllLeaves((leaf) => {
 			leaf.setPinned(false);
 		});
-		this.pinnedLeafIds.clear();
+		this.processedLeafIds.clear();
 	}
 }
