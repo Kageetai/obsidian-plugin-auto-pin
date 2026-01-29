@@ -8,7 +8,9 @@
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"format": "prettier --write \"src/**/*.ts\" \"*.{json,md,mjs}\"",
+		"format:check": "prettier --check \"src/**/*.ts\" \"*.{json,md,mjs}\""
 	},
 	"keywords": [],
 	"license": "0-BSD",
@@ -20,6 +22,7 @@
 		"eslint-plugin-obsidianmd": "0.1.9",
 		"globals": "14.0.0",
 		"jiti": "2.6.1",
+		"prettier": "^3.8.1",
 		"tslib": "2.4.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "8.35.1"

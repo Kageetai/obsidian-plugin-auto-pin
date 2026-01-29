@@ -1,5 +1,9 @@
-import {Plugin, TFile, WorkspaceLeaf} from 'obsidian';
-import {AutoPinSettings, AutoPinSettingTab, DEFAULT_SETTINGS} from "./settings";
+import { Plugin, TFile, WorkspaceLeaf } from "obsidian";
+import {
+	AutoPinSettings,
+	AutoPinSettingTab,
+	DEFAULT_SETTINGS,
+} from "./settings";
 
 export default class AutoPinPlugin extends Plugin {
 	settings: AutoPinSettings;
@@ -19,38 +23,41 @@ export default class AutoPinPlugin extends Plugin {
 
 		// Listen for active leaf changes - catches new tabs being opened
 		this.registerEvent(
-			this.app.workspace.on('active-leaf-change', (leaf: WorkspaceLeaf | null) => {
-				if (leaf && this.settings.enabled) {
-					this.pinLeafIfEligible(leaf);
-				}
-			})
+			this.app.workspace.on(
+				"active-leaf-change",
+				(leaf: WorkspaceLeaf | null) => {
+					if (leaf && this.settings.enabled) {
+						this.pinLeafIfEligible(leaf);
+					}
+				},
+			),
 		);
 
 		// Listen to layout-change to catch tabs opened via splits/duplicates
 		this.registerEvent(
-			this.app.workspace.on('layout-change', () => {
+			this.app.workspace.on("layout-change", () => {
 				if (this.settings.enabled) {
 					this.pinNewlyCreatedLeaves();
 				}
-			})
+			}),
 		);
 
 		// Command to manually pin all tabs
 		this.addCommand({
-			id: 'pin-all-tabs',
-			name: 'Pin all open tabs',
+			id: "pin-all-tabs",
+			name: "Pin all open tabs",
 			callback: () => {
 				this.pinAllExistingLeaves();
-			}
+			},
 		});
 
 		// Command to unpin all tabs
 		this.addCommand({
-			id: 'unpin-all-tabs',
-			name: 'Unpin all tabs',
+			id: "unpin-all-tabs",
+			name: "Unpin all tabs",
 			callback: () => {
 				this.unpinAllLeaves();
-			}
+			},
 		});
 	}
 
@@ -59,7 +66,11 @@ export default class AutoPinPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<AutoPinSettings>);
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			(await this.loadData()) as Partial<AutoPinSettings>,
+		);
 	}
 
 	async saveSettings() {
@@ -72,7 +83,7 @@ export default class AutoPinPlugin extends Plugin {
 	private getFileFromLeaf(leaf: WorkspaceLeaf): TFile | null {
 		const view = leaf.view;
 		// Check if the view has a file property (FileView interface)
-		if ('file' in view && view.file instanceof TFile) {
+		if ("file" in view && view.file instanceof TFile) {
 			return view.file;
 		}
 		return null;
@@ -83,11 +94,11 @@ export default class AutoPinPlugin extends Plugin {
 	 */
 	private isViewTypeEligible(viewType: string): boolean {
 		switch (viewType) {
-			case 'markdown':
+			case "markdown":
 				return this.settings.pinMarkdown;
-			case 'canvas':
+			case "canvas":
 				return this.settings.pinCanvas;
-			case 'bases':
+			case "bases":
 				return this.settings.pinBases;
 			default:
 				// For other file-based views (pdf, image, etc.)
@@ -112,7 +123,7 @@ export default class AutoPinPlugin extends Plugin {
 	 */
 	private pinLeafIfEligible(leaf: WorkspaceLeaf): void {
 		// Get unique leaf ID for tracking
-		const leafId = (leaf as unknown as {id: string}).id;
+		const leafId = (leaf as unknown as { id: string }).id;
 
 		// Skip if we've already processed this leaf
 		if (leafId && this.pinnedLeafIds.has(leafId)) {
@@ -160,7 +171,7 @@ export default class AutoPinPlugin extends Plugin {
 	 */
 	private pinNewlyCreatedLeaves(): void {
 		this.app.workspace.iterateAllLeaves((leaf) => {
-			const leafId = (leaf as unknown as {id: string}).id;
+			const leafId = (leaf as unknown as { id: string }).id;
 			if (leafId && !this.pinnedLeafIds.has(leafId)) {
 				this.pinLeafIfEligible(leaf);
 			}

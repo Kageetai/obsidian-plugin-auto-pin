@@ -6,10 +6,10 @@ Automatically pin tabs when they are opened in Obsidian.
 
 - **Automatic pinning** - Tabs are pinned automatically when opened
 - **File type control** - Choose which file types to auto-pin:
-  - Markdown notes (.md)
-  - Canvas files (.canvas)
-  - Bases (database views)
-  - Other file types (PDF, images, etc.)
+    - Markdown notes (.md)
+    - Canvas files (.canvas)
+    - Bases (database views)
+    - Other file types (PDF, images, etc.)
 - **Folder exclusions** - Exclude specific folders from auto-pinning
 - **Manual commands** - Pin or unpin all tabs at once
 
@@ -19,13 +19,10 @@ Automatically pin tabs when they are opened in Obsidian.
 
 > [!IMPORTANT] Not yet available on the Community Plugins page
 
-[//]: # (1. Open Obsidian Settings)
-
-[//]: # (2. Go to Community Plugins and disable Safe Mode)
-
-[//]: # (3. Click Browse and search for "Auto Pin")
-
-[//]: # (4. Install the plugin and enable it)
+[//]: # "1. Open Obsidian Settings"
+[//]: # "2. Go to Community Plugins and disable Safe Mode"
+[//]: # '3. Click Browse and search for "Auto Pin"'
+[//]: # "4. Install the plugin and enable it"
 
 ### Manual Installation
 
@@ -36,15 +33,15 @@ Automatically pin tabs when they are opened in Obsidian.
 
 ## Settings
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Enable auto-pin | On | Master toggle for automatic pinning |
-| Pin existing tabs on load | Off | Pin all open tabs when the plugin loads |
-| Pin Markdown notes | On | Auto-pin .md files |
-| Pin canvas files | On | Auto-pin .canvas files |
-| Pin bases | On | Auto-pin database views |
-| Pin other file types | Off | Auto-pin PDFs, images, etc. |
-| Excluded folders | Empty | Comma-separated folder paths to exclude |
+| Setting                   | Default | Description                             |
+| ------------------------- | ------- | --------------------------------------- |
+| Enable auto-pin           | On      | Master toggle for automatic pinning     |
+| Pin existing tabs on load | Off     | Pin all open tabs when the plugin loads |
+| Pin Markdown notes        | On      | Auto-pin .md files                      |
+| Pin canvas files          | On      | Auto-pin .canvas files                  |
+| Pin bases                 | On      | Auto-pin database views                 |
+| Pin other file types      | Off     | Auto-pin PDFs, images, etc.             |
+| Excluded folders          | Empty   | Comma-separated folder paths to exclude |
 
 ## Commands
 
