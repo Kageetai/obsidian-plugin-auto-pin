@@ -17,7 +17,8 @@ Automatically pin tabs when they are opened in Obsidian.
 
 ### From Obsidian Community Plugins
 
-> [!IMPORTANT] Not yet available on the Community Plugins page
+> [!IMPORTANT]
+> Not yet available on the Community Plugins page
 
 [//]: # "1. Open Obsidian Settings"
 [//]: # "2. Go to Community Plugins and disable Safe Mode"
