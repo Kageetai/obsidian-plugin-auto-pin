@@ -2,6 +2,7 @@
 	"name": "obsidian-sample-plugin",
 	"version": "1.0.0",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"author": "Kageetai",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
