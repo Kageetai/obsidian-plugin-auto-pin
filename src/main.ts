@@ -8,6 +8,13 @@ import {
 export default class AutoPinPlugin extends Plugin {
 	settings: AutoPinSettings;
 	private processedLeafIds: Set<string> = new Set();
+	private lastClickInfo: {
+		button: number;
+		ctrlKey: boolean;
+		metaKey: boolean;
+		timestamp: number;
+	} | null = null;
+	private mousedownHandler: ((evt: MouseEvent) => void) | null = null;
 
 	async onload() {
 		await this.loadSettings();
@@ -20,6 +27,9 @@ export default class AutoPinPlugin extends Plugin {
 				this.pinAllExistingLeaves();
 			});
 		}
+
+		// Set up bypass event listener based on current settings
+		this.updateBypassEventListener();
 
 		// Listen for active leaf changes - catches new tabs being opened
 		this.registerEvent(
@@ -63,6 +73,8 @@ export default class AutoPinPlugin extends Plugin {
 
 	onunload() {
 		this.processedLeafIds.clear();
+		this.lastClickInfo = null;
+		this.removeBypassEventListener();
 	}
 
 	async loadSettings() {
@@ -75,6 +87,42 @@ export default class AutoPinPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		this.updateBypassEventListener();
+	}
+
+	/**
+	 * Update the bypass event listener based on current settings
+	 */
+	private updateBypassEventListener(): void {
+		const shouldListen =
+			this.settings.bypassOnMiddleClick ||
+			this.settings.bypassOnModifierClick;
+
+		if (shouldListen && !this.mousedownHandler) {
+			// Register the listener
+			this.mousedownHandler = (evt: MouseEvent) => {
+				this.lastClickInfo = {
+					button: evt.button,
+					ctrlKey: evt.ctrlKey,
+					metaKey: evt.metaKey,
+					timestamp: Date.now(),
+				};
+			};
+			document.addEventListener("mousedown", this.mousedownHandler);
+		} else if (!shouldListen && this.mousedownHandler) {
+			// Remove the listener
+			this.removeBypassEventListener();
+		}
+	}
+
+	/**
+	 * Remove the bypass event listener
+	 */
+	private removeBypassEventListener(): void {
+		if (this.mousedownHandler) {
+			document.removeEventListener("mousedown", this.mousedownHandler);
+			this.mousedownHandler = null;
+		}
 	}
 
 	/**
@@ -122,20 +170,23 @@ export default class AutoPinPlugin extends Plugin {
 	 * Check if auto-pin should be bypassed based on how the tab was opened
 	 */
 	private shouldBypassAutoPinBasedOnEvent(): boolean {
-		const lastEvent = this.app.lastEvent;
-		if (!lastEvent || !(lastEvent instanceof MouseEvent)) {
+		// Use captured click info (valid for 500ms to account for event processing delay)
+		if (
+			!this.lastClickInfo ||
+			Date.now() - this.lastClickInfo.timestamp > 500
+		) {
 			return false;
 		}
 
 		// Middle-click (button === 1)
-		if (this.settings.bypassOnMiddleClick && lastEvent.button === 1) {
+		if (this.settings.bypassOnMiddleClick && this.lastClickInfo.button === 1) {
 			return true;
 		}
 
 		// Ctrl+click (Windows/Linux) or Cmd+click (Mac)
 		if (
 			this.settings.bypassOnModifierClick &&
-			(lastEvent.ctrlKey || lastEvent.metaKey)
+			(this.lastClickInfo.ctrlKey || this.lastClickInfo.metaKey)
 		) {
 			return true;
 		}

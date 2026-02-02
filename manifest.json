@@ -1,7 +1,7 @@
 {
 	"id": "auto-pin",
 	"name": "Auto Pin",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"minAppVersion": "0.15.0",
 	"description": "Automatically pins tabs when they are opened.",
 	"author": "Kageetai",
