@@ -9,6 +9,8 @@ export interface AutoPinSettings {
 	pinBases: boolean;
 	pinOther: boolean;
 	excludedFolders: string[];
+	bypassOnMiddleClick: boolean;
+	bypassOnModifierClick: boolean;
 }
 
 export const DEFAULT_SETTINGS: AutoPinSettings = {
@@ -19,6 +21,8 @@ export const DEFAULT_SETTINGS: AutoPinSettings = {
 	pinBases: true,
 	pinOther: false,
 	excludedFolders: [],
+	bypassOnMiddleClick: false,
+	bypassOnModifierClick: false,
 };
 
 export class AutoPinSettingTab extends PluginSettingTab {
@@ -124,6 +128,32 @@ export class AutoPinSettingTab extends PluginSettingTab {
 							.split(",")
 							.map((s) => s.trim())
 							.filter((s) => s.length > 0);
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl).setName("Bypass").setHeading();
+
+		new Setting(containerEl)
+			.setName("Bypass on middle-click")
+			.setDesc("Don't auto-pin tabs opened via middle mouse button")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.bypassOnMiddleClick)
+					.onChange(async (value) => {
+						this.plugin.settings.bypassOnMiddleClick = value;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Bypass on modifier-click")
+			.setDesc("Don't auto-pin tabs opened via Ctrl+click (or Cmd+click on Mac)")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.bypassOnModifierClick)
+					.onChange(async (value) => {
+						this.plugin.settings.bypassOnModifierClick = value;
 						await this.plugin.saveSettings();
 					}),
 			);
