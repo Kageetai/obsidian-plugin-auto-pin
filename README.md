@@ -25,6 +25,13 @@ Automatically pin tabs when they are opened in Obsidian.
 [//]: # '3. Click Browse and search for "Auto Pin"'
 [//]: # "4. Install the plugin and enable it"
 
+### Using BRAT
+
+1. Install the [BRAT plugin](https://github.com/TfTHacker/obsidian42-brat) from Community Plugins
+2. Open BRAT settings and click "Add Beta plugin"
+3. Enter the repository URL: `Kageetai/obsidian-plugin-auto-pin`
+4. Click "Add Plugin" and enable it in Settings → Community Plugins
+
 ### Manual Installation
 
 1. Download `main.js`, `manifest.json`, and `styles.css` from the latest release
