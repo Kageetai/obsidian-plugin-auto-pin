@@ -119,6 +119,31 @@ export default class AutoPinPlugin extends Plugin {
 	}
 
 	/**
+	 * Check if auto-pin should be bypassed based on how the tab was opened
+	 */
+	private shouldBypassAutoPinBasedOnEvent(): boolean {
+		const lastEvent = this.app.lastEvent;
+		if (!lastEvent || !(lastEvent instanceof MouseEvent)) {
+			return false;
+		}
+
+		// Middle-click (button === 1)
+		if (this.settings.bypassOnMiddleClick && lastEvent.button === 1) {
+			return true;
+		}
+
+		// Ctrl+click (Windows/Linux) or Cmd+click (Mac)
+		if (
+			this.settings.bypassOnModifierClick &&
+			(lastEvent.ctrlKey || lastEvent.metaKey)
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Pin a leaf if it meets all eligibility criteria
 	 */
 	private pinLeafIfEligible(leaf: WorkspaceLeaf): void {
@@ -133,6 +158,11 @@ export default class AutoPinPlugin extends Plugin {
 
 		// Mark as processed early to prevent re-evaluation on subsequent layout changes
 		this.processedLeafIds.add(leafId);
+
+		// Check if auto-pin should be bypassed based on how the tab was opened
+		if (this.shouldBypassAutoPinBasedOnEvent()) {
+			return;
+		}
 
 		// Check if the leaf has an associated file (primary filter)
 		const file = this.getFileFromLeaf(leaf);
